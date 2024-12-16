@@ -1,3 +1,20 @@
+const vertexCode = `
+attribute vec4 vertexPos;
+
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+
+void main() {
+   gl_Position = projectionMatrix * modelViewMatrix * vertexPos;
+}
+`;
+
+const fragmentCode = `
+void main() {
+    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+}
+`
+
 class Game {
 	constructor(canvas, gl) {
 		this.canvas = canvas;
