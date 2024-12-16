@@ -1,3 +1,5 @@
+import { Shader } from "./shader.js";
+
 const vertexCode = `
 attribute vec4 vertexPos;
 
@@ -22,7 +24,8 @@ class Game {
 	}
 
 	init() {
-
+		this.shader = new Shader(this.gl, vertexCode, fragmentCode);
+		this.shader.initShaders();
 	}
 
 	loop() {

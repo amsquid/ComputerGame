@@ -6,35 +6,44 @@ class Shader {
 		this.fragmentCode = fragmentCode;
 	}
 
-	init_shaders() {
-		const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
-		const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
-
-		const shaderProgram = gl.createProgram();
-		gl.attachShader(shaderProgram, vertexShader);
-		gl.attachShader(shaderProgram, fragmentShader);
-		gl.linkProgram(shaderProgram);
-
-		if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-			alert(`Unable to initialize the shader program: ${gl.getProgramInfoLog(shaderProgram)}`);
-			return null;
-		}
-
-		this.shaderProgram = shaderProgram;
-	}
-
-	load_shader(type, source) {
-		const shader = gl.createShader(type);
-		this.gl.shaderSource(source, shader);
+	loadShader(type, source) {
+		const shader = this.gl.createShader(type);
+		this.gl.shaderSource(shader, source);
 		this.gl.compileShader(shader);
 
-		if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-			alert(`An error occurred compiling the shaders: ${gl.getShaderInfoLog(shader)}`);
-			gl.deleteShader(shader);
+		if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
+			alert(`An error occurred compiling the shaders: ${this.gl.getShaderInfoLog(shader)}`);
+			this.gl.deleteShader(shader);
 			return null;
 		}
 
 		return shader;
+	}
+
+	initShaders() {
+		const vertexShader = this.loadShader(this.gl.VERTEX_SHADER, this.vertexCode);
+		const fragmentShader = this.loadShader(this.gl.FRAGMENT_SHADER, this.fragmentCode);
+
+		const shaderProgram = this.gl.createProgram();
+		this.gl.attachShader(shaderProgram, vertexShader);
+		this.gl.attachShader(shaderProgram, fragmentShader);
+		this.gl.linkProgram(shaderProgram);
+		
+		if (!this.gl.getProgramParameter(shaderProgram, this.gl.LINK_STATUS)) {
+			alert(`Unable to initialize the shader program: ${this.gl.getProgramInfoLog(shaderProgram)}`);
+			return null;
+		}
+
+		this.programInfo = {
+			program: shaderProgram,
+			attribs: {
+				vertexPos: this.gl.getAttribLocation(shaderProgram, "vertexPos")
+			},
+			uniforms: {
+				modelViewMatrix: this.gl.getUniformLocation(shaderProgram, "modelViewMatrix"),
+				projectionMatrix: this.gl.getUniformLocation(shaderProgram, "projectionMatrix"),
+			}
+		};
 	}
 }
 
